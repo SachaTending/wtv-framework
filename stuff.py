@@ -4,7 +4,8 @@ from glob import glob
 imgs = Service("wtv-images")
 content_svc = Service("wtv-content")
 wtv_center_svc = Service("wtv-center")
-svcs = [imgs, content_svc, wtv_center_svc]
+favorite_svc = Service("wtv-favorite")
+svcs = [imgs, content_svc, wtv_center_svc, favorite_svc]
 
 @imgs.addhandl("splash")
 def splash_img(data):
