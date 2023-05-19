@@ -87,18 +87,22 @@ class Minisrv:
         self.services.append(srv)
     def handle_thread(self, sock: socket, addr: tuple):
         out = self.handle(sock.recv(32768))
-        if isinstance(out, Responce): out = out.pack().encode()
-        if isinstance(out, SendFile):
-            out.headers['Content-Length'] = str(path.getsize(out.file))
-            sock.send(out.pack_header().encode())
-            file = open(out.file, "rb")
-            bs = path.getsize(out.file)
-            st = 0
-            while bs > st:
-                sock.send(file.read(1024))
-                st+=1024
-        else:
-            sock.send(out)
+        try:
+            if isinstance(out, Responce): out = out.pack().encode()
+            if isinstance(out, SendFile):
+                out.headers['Content-Length'] = str(path.getsize(out.file))
+                sock.send(out.pack_header().encode())
+                file = open(out.file, "rb")
+                bs = path.getsize(out.file)
+                st = 0
+                while bs > st:
+                    sock.send(file.read(1024))
+                    st+=1024
+            else:
+                sock.send(out)
+        except Exception as e:
+            print(f"{addr}: exception: {e}")
+            sock.send(f"WTVFramework ran into problem: {e}".encode())
         sock.close()
     def handle(self, data: bytes):
         data: dict[str, str] = parsehttp(data.decode())
