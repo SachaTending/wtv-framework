@@ -1,11 +1,12 @@
 from wtvframework import *
 from glob import glob
+from config import name
 
 home = Service("wtv-home")
 
 home_data = open("home.html").read()
 
-splash = """
+splash = f"""
 <html>
 <head>
 <display hideoptions nostatus showwhencomplete skipback clearback fontsize=medium>
@@ -23,7 +24,7 @@ splash = """
 <p><br>
 <table border>
 <tr><td>
-wtvframework v0.1
+{name}
 <tr><td>Connected: 1 TBit per second/Optical link
 </table>
 </center>
