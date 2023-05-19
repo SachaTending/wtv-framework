@@ -86,8 +86,8 @@ class Minisrv:
     def addservice(self, srv: Service):
         self.services.append(srv)
     def handle_thread(self, sock: socket, addr: tuple):
-        out = self.handle(sock.recv(32768))
         try:
+            out = self.handle(sock.recv(32768))
             if isinstance(out, Responce): out = out.pack().encode()
             if isinstance(out, SendFile):
                 out.headers['Content-Length'] = str(path.getsize(out.file))
