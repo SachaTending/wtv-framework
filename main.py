@@ -1,5 +1,6 @@
 from wtvframework import parsehttp, Minisrv, Service, Responce, SendFile
 import home, login, sys, stuff
+from config import *
 
 print("starting server")
 m = Minisrv()
@@ -110,6 +111,6 @@ for i in login.svcs: m.addservice(i)
 for i in stuff.svcs: m.addservice(i)
 m.addservice(musicsvc)
 #print(f"wtv_svcs_add: {wtv_svcs_add()}")
-m.runserv()
+m.runserv(host=host, port=port)
 
 # client:ConfirmConnectSetup?serviceType=custom&machine=127.0.0.1&port=1615&useEncryption=true&connect=Connect
