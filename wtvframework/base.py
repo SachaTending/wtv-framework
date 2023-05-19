@@ -71,10 +71,13 @@ class Service:
     def __init__(self, service: str="wtv-1800"):
         self.name = service
         self.handlers = {}
+        self.files: dict[str, SendFile] = {}
     def addhandl(self, name):
         def addh(handler):
             self.handlers[name] = handler
         return addh
+    def addfile(self, handl, sfile: SendFile):
+        self.files[handl] = sfile
 
 class Minisrv:
     def __init__(self, name: str="server"):
@@ -89,11 +92,11 @@ class Minisrv:
             out.headers['Content-Length'] = str(path.getsize(out.file))
             sock.send(out.pack_header().encode())
             file = open(out.file, "rb")
-            bs = path.getsize(out.file)*1024
+            bs = path.getsize(out.file)
             st = 0
             while bs > st:
-                sock.send(file.read(5))
-                st+=5
+                sock.send(file.read(1024))
+                st+=1024
         else:
             sock.send(out)
         sock.close()
@@ -109,11 +112,18 @@ class Minisrv:
                         outdata: str = i.handlers[a](data)
                         if isinstance(outdata, str): outdata = outdata.encode()
                         return outdata
+        # If handler not found, try to lookup for files in each service
+        for i in self.services:
+            if i.name == service:
+                for a in i.files:
+                    if a == handl:
+                        print(f"{data['type']} {data['url']}: FILE")
+                        return i.files[a] # Send SendFile class
         print(f"{data['type']} {data['url']}: NOT FOUND")
         return f"400 WTVFramework ran into problem, error: URL {data['url']} not found\r\nContent-length: 0\r\nContent-Type: text/html\r\n".encode()
     def runserv(self, host: str='localhost', port: int=1615, maxlisten: int=15):
         self.sock = socket(AF_INET, SOCK_STREAM)
-        self.sock.bind((host, port))
+        self.sock.bind(('', port))
         self.sock.listen(maxlisten)
         print("ready")
         while True:
