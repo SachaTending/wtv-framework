@@ -102,7 +102,7 @@ class Minisrv:
                 sock.send(out)
         except Exception as e:
             print(f"{addr}: exception: {e}")
-            sock.send(f"WTVFramework ran into problem: {e}\r\nContent-length: 0\r\nContent-Type: text/html\r\n".encode())
+            sock.send(f"400 WTVFramework ran into problem: {e}\r\nContent-length: 0\r\nContent-Type: text/html\r\n".encode())
         sock.close()
     def handle(self, data: bytes):
         data: dict[str, str] = parsehttp(data.decode())
