@@ -13,13 +13,13 @@ xd_data = """
 """
 
 def wtv_svcs_add():
-    out = ""
-    sheet = "wtv-service: name={name} host=185.252.146.160 port=1615 flags={flags}" 
+    out = "wtv-service: name=wtv-* host={connect_host} port=1615 flags=0x00000007\n".format(connect_host=connect_host)
+    sheet = "wtv-service: name={name} host={connect_host} port=1615 flags={flags}"
     for i in m.services:
         if i.name.startswith(('wtv-1800', 'wtv-star')):
-            out += sheet.format(name=i.name, flags="0x00000012")
+            out += sheet.format(name=i.name, flags="0x00000012", connect_host=connect_host)
         else:
-            out += sheet.format(name=i.name, flags="0x00000007")
+            out += sheet.format(name=i.name, flags="0x00000007", connect_host=connect_host)
         if i.name == "wtv-1800": out += " connections=15892659828057"
         out += "\n"
     return out
@@ -63,7 +63,6 @@ wtv-client-time-zone: GMT -0000
 wtv-client-time-dst-rule: GMT
 wtv-client-date: Fri, 28 Apr 2023 19:12:37 GMT
 Content-length: 0
-wtv-backgroundmusic-load-playlist: wtv-home:/playlist-load
 wtv-visit: wtv-head-waiter:/ValidateLogin
 wtv-service: reset
 wtv-home: wtv-home:/home
@@ -77,10 +76,6 @@ brazil = """
 <h1>u going to brazil</h1>
 <h1>fun fact: webtv can open any service</h1>
 """
-
-@svc2.addhandl("u-going-to-brazil")
-def c(data):
-    return Responce(400, err_data="U GOING TO BRASIL NOW")
 
 @musicsvc.addhandl("music")
 def music(data):
@@ -102,13 +97,19 @@ Content-Length: {len}
 {data}
 """.format(len=len(data2), data=data2)
 
+def addsvcs(lib: object):
+    if getattr(lib, "svcs") == None:
+        print(f"{lib} dont have svcs list")
+    else:
+        for i in lib.svcs: m.addservice(i)
+
 # Add services
 m.addservice(svc)
 m.addservice(svc2)
 m.addservice(svc3)
-m.addservice(home.home)
-for i in login.svcs: m.addservice(i)
-for i in stuff.svcs: m.addservice(i)
+addsvcs(login)
+addsvcs(home)
+addsvcs(stuff)
 m.addservice(musicsvc)
 #print(f"wtv_svcs_add: {wtv_svcs_add()}")
 m.runserv(host=host, port=port)

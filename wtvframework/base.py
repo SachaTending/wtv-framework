@@ -127,11 +127,15 @@ class Minisrv:
         return f"400 WTVFramework ran into problem, error: URL {data['url']} not found\r\nContent-length: 0\r\nContent-Type: text/html\r\n".encode()
     def runserv(self, host: str='localhost', port: int=1615, maxlisten: int=15):
         self.sock = socket(AF_INET, SOCK_STREAM)
-        self.sock.bind(('', port))
+        self.sock.bind((host, port))
         self.sock.listen(maxlisten)
         print("ready")
         while True:
-            sock, addr = self.sock.accept()
+            try: sock, addr = self.sock.accept()
+            except KeyboardInterrupt:
+                print("shutting down")
+                self.sock.close()
+                exit()
             th = Thread(target=self.handle_thread, name=f"Handler({addr})", args=(sock, addr))
             th.start()
             

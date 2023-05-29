@@ -55,6 +55,7 @@ def stage2(data: dict):
 
 validate_login_headers = {
     'wtv-visit': 'wtv-home:/splash',
+    'wtv-backgroundmusic-load-playlist': 'wtv-home:/playlist-load'
 }
 
 @head_waiter.addhandl("ValidateLogin")
