@@ -1,6 +1,8 @@
-from wtvframework import parsehttp, Minisrv, Service, Responce, SendFile
-import home, login, sys, stuff
+import sys
+
+import svcs
 from config import *
+from wtvframework import Minisrv, Responce, SendFile, Service, parsehttp
 
 print("starting server")
 m = Minisrv()
@@ -98,20 +100,18 @@ Content-Length: {len}
 """.format(len=len(data2), data=data2)
 
 def addsvcs(lib: object):
-    if getattr(lib, "svcs") == None:
-        print(f"{lib} dont have svcs list")
-    else:
+    try: 
         for i in lib.svcs: m.addservice(i)
+    except: pass
 
 # Add services
 m.addservice(svc)
 m.addservice(svc2)
 m.addservice(svc3)
-addsvcs(login)
-addsvcs(home)
-addsvcs(stuff)
+for i in dir(svcs):
+    addsvcs(getattr(svcs, i))
 m.addservice(musicsvc)
-#print(f"wtv_svcs_add: {wtv_svcs_add()}")
+
 m.runserv(host=host, port=port)
 
 # client:ConfirmConnectSetup?serviceType=custom&machine=127.0.0.1&port=1615&useEncryption=true&connect=Connect

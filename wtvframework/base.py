@@ -126,6 +126,10 @@ class Minisrv:
         print(f"{data['type']} {data['url']}: NOT FOUND")
         return f"400 WTVFramework ran into problem, error: URL {data['url']} not found\r\nContent-length: 0\r\nContent-Type: text/html\r\n".encode()
     def runserv(self, host: str='localhost', port: int=1615, maxlisten: int=15):
+        print("services: ", end="")
+        for i in self.services:
+            print(i.name, "", end="")
+        print()
         self.sock = socket(AF_INET, SOCK_STREAM)
         self.sock.bind((host, port))
         self.sock.listen(maxlisten)

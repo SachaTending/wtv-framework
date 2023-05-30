@@ -55,7 +55,12 @@ Content-Length: 0
 
 @home.addhandl("Credits-Introduction")
 def creds_intro(data):
-    return Responce(200, data=open("pages/wtv-home/Credits-Introduction.html").read())
+    rgstr = "<a href=\"wtv-register:/register\">Register</a>"
+    try: 
+        open(f"accounts/{data['headers']['wtv-client-serial-number']}.json")
+        rgstr = ""
+    except: pass
+    return Responce(200, data=open("pages/wtv-home/Credits-Introduction.html").read().replace("REGISTER_PLACEHOLDER", rgstr))
 
 @home.addhandl("splash")
 def splash_handl(data):
