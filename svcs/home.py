@@ -18,10 +18,9 @@ splash = f"""
 <body bgcolor="#000000" text="#449944">
 <bgsound src="file://ROM/Sounds/Splash.mid">
 <center>
-<spacer type=block height=88 width=21>
+<p>based on TendingStream73's wtv-framework server</p>
 <img src="file://ROM/Images/spacer.gif" height=4><br>
 <img src="wtv-images:/splash">
-<p>based on TendingStream73's wtv-framework server</p>
 <br><br><br>
 <p><br>
 <p><br>
