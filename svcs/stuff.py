@@ -2,6 +2,7 @@ from glob import glob
 
 import config
 from wtvframework import *
+from rendertext import render, render_autosize
 
 imgs = Service("wtv-images")
 content_svc = Service("wtv-content")
@@ -13,6 +14,18 @@ svcs = [imgs, content_svc, wtv_center_svc, favorite_svc, star_svc]
 @imgs.addhandl("splash")
 def splash_img(data):
     return SendFile("d/splash.gif", ftype="image/gif", headers={'Refresh': '4; url=wtv-home:/home'})
+
+@imgs.addhandl("text")
+def text_test(data):
+    data2 = render_autosize("тест, rendered with pillow :)")
+    header = f"""200 OK
+Content-Type: image/jpeg
+Content-Length: {len(data2)}
+
+
+""".encode()
+    header+=data2
+    return header
 
 # wtv-center stuff
 @wtv_center_svc.addhandl("money")

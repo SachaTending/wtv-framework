@@ -11,7 +11,7 @@ def gen_class(name: str, ssid: str) -> Account:
     return temp
 
 def register(name: str, ssid: str):
-    dump({'name': name}, open(f"accounts/{ssid}.json", "w"))
+    dump({'name': name.removesuffix("\r")}, open(f"accounts/{ssid}.json", "w"))
 
 def load_account(ssid: str):
     try: data = load(open(f"accounts/{ssid}.json"))
