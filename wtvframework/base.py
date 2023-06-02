@@ -106,25 +106,30 @@ class Minisrv:
         sock.close()
     def handle(self, data: bytes):
         data: dict[str, str] = parsehttp(data.decode())
-        service = data['url'].split(":",1)[0]
-        handl = data['url'].split(":/",1)[1]
-        for i in self.services:
-            if i.name == service:
-                for a in i.handlers:
-                    if a == handl:
-                        print(f"{data['type']} {data['url']}")
-                        outdata: str = i.handlers[a](data)
-                        if isinstance(outdata, str): outdata = outdata.encode()
-                        return outdata
-        # If handler not found, try to lookup for files in each service
-        for i in self.services:
-            if i.name == service:
-                for a in i.files:
-                    if a == handl:
-                        print(f"{data['type']} {data['url']}: FILE")
-                        return i.files[a] # Send SendFile class
-        print(f"{data['type']} {data['url']}: NOT FOUND")
-        return f"400 WTVFramework ran into problem, error: URL {data['url']} not found\r\nContent-length: 0\r\nContent-Type: text/html\r\n".encode()
+        # Determine request type(HTTP Or WTVP?)
+        if ":/" in data['url']:
+            service = data['url'].split(":",1)[0]
+            handl = data['url'].split(":/",1)[1]
+            for i in self.services:
+                if i.name == service:
+                    for a in i.handlers:
+                        if a == handl:
+                            print(f"{data['type']} {data['url']}")
+                            outdata: str = i.handlers[a](data)
+                            if isinstance(outdata, str): outdata = outdata.encode()
+                            return outdata
+            # If handler not found, try to lookup for files in each service
+            for i in self.services:
+                if i.name == service:
+                    for a in i.files:
+                        if a == handl:
+                            print(f"{data['type']} {data['url']}: FILE")
+                            return i.files[a] # Send SendFile class
+            print(f"{data['type']} {data['url']}: NOT FOUND")
+            return f"400 WTVFramework ran into problem, error: URL {data['url']} not found\r\nContent-length: 0\r\nContent-Type: text/html\r\n".encode()
+        else:
+            print("Request handler: Detected HTTP request")
+            return "HTTP/1.1 418 I'm a teapot\r\nContent-Type: text/html\r\nContent-Length: {len}\r\nServer: wtv-framework/1.0\r\n\n<p>I cannot make coffee for you because im a teapot</p>".format(len=len("<p>I cannot make coffee for you because im a teapot</p>")).encode()
     def runserv(self, host: str='localhost', port: int=1615, maxlisten: int=15):
         print("services: ", end="")
         for i in self.services:

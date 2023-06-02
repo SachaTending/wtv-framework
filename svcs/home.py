@@ -68,3 +68,6 @@ def splash_handl(data):
 @favorites.addhandl("favorite")
 def favorite_troll(data):
     return Responce(400, err_data="fuck out, you dont have favorites")
+
+for i in glob("d/*.swf"): 
+    home.addfile("images/"+i.removeprefix("d/"), SendFile(i))

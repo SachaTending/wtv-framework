@@ -27,11 +27,28 @@ Content-Length: {len(data2)}
     header+=data2
     return header
 
+imgs.addfile("debug-on-prod", SendFile("d/debug-on-prod.png", ftype="image/png"))
+
 # wtv-center stuff
 @wtv_center_svc.addhandl("money")
 def money_handl(data):
     return Responce(200, data=open("pages/wtv-center/money.html").read())
 
+@wtv_center_svc.addhandl("templates/en-US/CustomInfoLoadingGrunge.tmpl")
+def template(data):
+    return Responce(200, data=open("pages/wtv-center/template.html").read())
+
+@wtv_center_svc.addhandl("center")
+def center(data):
+    return Responce(200, data=open('pages/wtv-center/center.html').read().replace('WHAT_REQUESTED', data['options']['info']))
+
+@content_svc.addhandl("redirect") # Redirect to specific page
+def redirect(data: dict[dict]):
+    redirect_to = data['options'].get("req-id")
+    print(f"pages/wtv-content/{redirect_to}.html")
+    try: page=open(f"pages/wtv-content/{redirect_to}.html").read()
+    except FileNotFoundError: page=f"Error, it seems like you requested wrong page: {redirect_to}\n<a href=\"wtv-home:/home\">Return to home</a>"
+    return Responce(200, data=page)
 # wtv-star
 @star_svc.addhandl("star")
 def star_handl(data):

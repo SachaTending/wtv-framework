@@ -15,7 +15,7 @@ def parsehttp(d: str):
             if len(i.split("="))==1:
                 out["single_opts"].append(i)
             else:
-                out["options"][i.split("=")[0]] = i.split("=")[1]
+                out["options"][i.split("=")[0]] = i.split("=")[1].removesuffix("\r")
     del d1[0]
     dataStart = False
     amogus = []
